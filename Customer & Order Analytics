@@ -49,3 +49,46 @@ ON FEB.orderid=cust.order_id
 WHERE Feb.Quantity>2
 AND length(orderid) = 6
 AND orderid <> 'Order ID';
+
+---How many of each type of headphone were sold in February? In other words, what is the sum of the quantity of products sold that have “headphones” in the name from the February dataset? Group the results by product.
+SELECT SUM(Quantity) AS Products_sold, Product
+FROM FebSales
+WHERE Product LIKE '%headphones%'
+AND length(orderid) = 6
+AND orderid <> 'Order ID'
+GROUP BY Product; 
+
+--What was the average amount spent per account in February? In other words, what is the average amount spent / number of accounts, not the amount spent by each account.
+SELECT SUM (FebSales.Quantity*FebSales.price)/COUNT(customers.acctnum) AS Amount_Spent
+FROM FebSales
+LEFT JOIN customers
+ON customers.order_id=FebSales.orderID
+WHERE length(orderid) = 6
+AND orderid <> 'Order ID';
+
+
+--Find order ids from Georgia (GA) where the order has an average price greater than $1,000. Only find orders from dates beginning with ‘04/1’. Assume that the dates are stored in the MM/DD/YY HH:MM format.
+SELECT  orderID
+FROM AprSales
+WHERE location LIKE '%GA%' 
+AND orderdate LIKE '04/1%'
+AND length(orderid) = 6
+AND orderid <> 'Order ID'
+GROUP BY orderID
+HAVING AVG(price) > 1000;
+
+--You’ve been given the following results from the MaySales table. Can you reverse engineer a SQL query that returns these results? The result set will naturally only return 10 rows (i.e., you will not have to use LIMIT to get to 10 results).
+SELECT MaySales.location, MaySales.orderID
+FROM MaySales
+WHERE orderID LIKE '1943%5'
+AND length(orderid) = 6
+AND orderid <> 'Order ID'
+ORDER BY orderID; 
+
+--Which product brought in the most revenue in January and how much revenue did it bring in total? In other words, show the one product that generated the most revenue (revenue being equivalent to quantity of an item multiplied by the item’s price). 
+SELECT product, SUM(Quantity)*price AS revenue
+FROM JanSales
+GROUP BY product
+ORDER BY SUM (quantity*price) desc
+LIMIT 1; 
+
